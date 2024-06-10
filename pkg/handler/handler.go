@@ -37,8 +37,19 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/sign-in", h.signIn)
 	}
 
+	// CORS configuration
+	config_api := cors.Config{
+		//AllowOrigins:     []string{"http://example.com", "http://anotherdomain.com"},
+		AllowAllOrigins: true,
+		AllowMethods:    []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:    []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:   []string{"Content-Length"},
+		MaxAge:          12 * time.Hour,
+	}
+
 	api := router.Group("/api", h.userIdentity)
 	{
+		api.Use(cors.New(config_api))
 		users := api.Group("/users")
 		{
 			users.POST("/", h.createUserManage)
